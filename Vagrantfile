@@ -8,6 +8,12 @@ Vagrant.configure("2") do |config|
     config.vm.box_url = ENV['PMX_BASEBOX_URL'] || "http://storage.core-os.net/coreos/amd64-usr/367.1.0/coreos_production_vagrant.box"
     config.vm.hostname = ENV['PMX_VM_NAME'] || "panamax-vm"
 
+    config.trigger.before :up do
+        info 'Ensuring the Panamax images disk exists...'
+        run './provision_panamax_images.sh'
+        info '...done.'
+    end
+
     config.vm.network "forwarded_port", guest: 3000, host: Integer(ENV['PMX_PORT_UI']||8888)
     config.vm.network "forwarded_port", guest: 3001, host: Integer(ENV['PMX_PORT_API']||8889)
     #config.vm.network "forwarded_port", guest: 8080, host: 8666
